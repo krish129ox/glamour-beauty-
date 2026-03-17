@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glamour Beauty — Indore's Premium Beauty Booking Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8D5A3;
+    --gold-dark: #9A7535;
+    --cream: #FAF6EF;
+    --cream-dark: #F0E8D8;
+    --off-white: #FDFAF5;
+    --charcoal: #2C2520;
+    --charcoal-mid: #5A4E45;
+    --charcoal-light: #8A7E75;
+    --rose: #C4806A;
+    --rose-light: #EDD5CB;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--charcoal);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--gold-dark);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    cursor: pointer;
+  }
+  .logo span { color: var(--gold); font-style: italic; }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links li {
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 0.2s;
+  }
+  .nav-links li:hover, .nav-links li.active { opacity: 1; color: var(--gold); }
+  .nav-btn {
+    background: var(--gold);
+    color: var(--charcoal);
+    border: none;
+    padding: 9px 20px;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: var(--gold-light); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 24px; height: 2px; background: var(--gold-light); display: block; }
+  @media(max-width: 680px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .nav-btn { display: none; }
+  }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ===== HOME PAGE ===== */
+  .hero {
+    background: var(--charcoal);
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg, transparent, transparent 40px,
+      rgba(201,168,76,0.04) 40px, rgba(201,168,76,0.04) 41px
+    );
+  }
+  .hero-tag {
+    display: inline-block;
+    border: 1px solid var(--gold-dark);
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 64px);
+    color: var(--off-white);
+    line-height: 1.15;
+    max-width: 700px;
+    margin: 0 auto 1rem;
+  }
+  .hero h1 em { color: var(--gold); font-style: italic; }
+  .hero p {
+    color: var(--charcoal-light);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.8;
+  }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--charcoal);
+    border: none;
+    padding: 14px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--gold-light);
+    border: 1px solid var(--gold-dark);
+    padding: 14px 32px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--gold);
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    padding: 1.2rem 2rem;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--charcoal); }
+  .stat-label { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-dark); }
+
+  /* SECTION */
+  .section { padding: 4rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .section-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: clamp(26px, 4vw, 38px); color: var(--charcoal); line-height: 1.25; margin-bottom: 0.5rem; }
+  .section-title em { font-style: italic; color: var(--rose); }
+  .section-sub { color: var(--charcoal-light); font-size: 14px; font-weight: 300; max-width: 480px; line-height: 1.8; margin-bottom: 2.5rem; }
+  .divider { width: 48px; height: 1px; background: var(--gold); margin: 1rem 0 2rem; }
+
+  /* SERVICE CARDS */
+  .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; }
+  .service-card {
+    background: var(--off-white);
+    border: 1px solid var(--gold-light);
+    padding: 2rem 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+    text-align: center;
+  }
+  .service-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+  .service-icon {
+    width: 52px; height: 52px;
+    background: var(--cream-dark);
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .service-name { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--charcoal); margin-bottom: 0.4rem; }
+  .service-desc { font-size: 12px; color: var(--charcoal-light); font-weight: 300; line-height: 1.6; margin-bottom: 1rem; }
+  .service-price { font-size: 13px; color: var(--gold); font-weight: 500; letter-spacing: 0.05em; }
+
+  /* PARLOUR CARDS */
+  .parlour-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .parlour-card {
+    background: var(--off-white);
+    border: 1px solid var(--cream-dark);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .parlour-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .parlour-img {
+    height: 140px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    position: relative;
+  }
+  .parlour-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--gold); color: var(--charcoal);
+    font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 3px 10px;
+  }
+  .parlour-body { padding: 1.25rem; }
+  .parlour-name { font-family: 'Playfair Display', serif; font-size: 17px; margin-bottom: 4px; }
+  .parlour-loc { font-size: 12px; color: var(--charcoal-light); margin-bottom: 0.8rem; }
+  .parlour-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .tag { background: var(--cream-dark); color: var(--charcoal-mid); font-size: 10px; letter-spacing: 0.08em; padding: 3px 10px; text-transform: uppercase; }
+  .parlour-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--cream-dark); padding-top: 0.8rem; }
+  .stars { color: var(--gold); font-size: 12px; }
+  .rating-count { font-size: 11px; color: var(--charcoal-light); }
+  .btn-sm {
+    background: var(--charcoal); color: var(--gold-light); border: none;
+    padding: 7px 16px; font-family: 'Jost', sans-serif;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase; cursor: pointer; transition: background 0.2s;
+  }
+  .btn-sm:hover { background: var(--gold); color: var(--charcoal); }
+
+  /* ===== SERVICES PAGE ===== */
+  .services-hero { background: var(--charcoal); padding: 3rem 2rem; text-align: center; }
+  .services-hero h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 42px); color: var(--off-white); margin-bottom: 0.5rem; }
+  .services-hero p { color: var(--charcoal-light); font-size: 14px; font-weight: 300; }
+  .filter-bar {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    padding: 1.5rem 2rem; max-width: 1100px; margin: 0 auto; justify-content: center;
+  }
+  .filter-btn {
+    background: transparent; border: 1px solid var(--cream-dark);
+    color: var(--charcoal-mid); padding: 8px 20px;
+    font-family: 'Jost', sans-serif; font-size: 12px;
+    letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--gold); border-color: var(--gold); color: var(--charcoal); }
+  .service-list { max-width: 1100px; margin: 0 auto; padding: 0 2rem 4rem; }
+  .service-row {
+    display: flex; align-items: center; gap: 1.5rem;
+    padding: 1.5rem 0; border-bottom: 1px solid var(--cream-dark);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .service-row:hover { background: var(--off-white); margin: 0 -1rem; padding: 1.5rem 1rem; }
+  .sr-icon { width: 56px; height: 56px; background: var(--cream-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .sr-info { flex: 1; }
+  .sr-name { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 3px; }
+  .sr-desc { font-size: 13px; color: var(--charcoal-light); font-weight: 300; }
+  .sr-right { text-align: right; flex-shrink: 0; }
+  .sr-price { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold-dark); }
+  .sr-duration { font-size: 12px; color: var(--charcoal-light); margin-bottom: 0.5rem; }
+
+  /* ===== AGENTS PAGE ===== */
+  .agents-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; }
+  .agent-card {
+    background: var(--off-white); border: 1px solid var(--cream-dark);
+    text-align: center; padding: 2rem 1.5rem;
+    transition: border-color 0.2s, transform 0.2s; cursor: pointer;
+  }
+  .agent-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+  .agent-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--charcoal); margin: 0 auto 1rem;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 24px;
+    color: var(--gold-light); border: 2px solid var(--gold-dark);
+  }
+  .agent-name { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 3px; }
+  .agent-role { font-size: 12px; color: var(--gold); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1rem; }
+  .agent-skills { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-bottom: 1rem; }
+  .skill-tag { background: var(--cream-dark); color: var(--charcoal-mid); font-size: 10px; letter-spacing: 0.06em; padding: 3px 10px; text-transform: uppercase; }
+  .agent-avail { font-size: 11px; color: #5A8A5A; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1rem; }
+  .agent-avail.busy { color: var(--rose); }
+
+  /* ===== BOOKING PAGE ===== */
+  .booking-layout {
+    max-width: 900px; margin: 0 auto; padding: 3rem 2rem;
+    display: grid; grid-template-columns: 1fr 340px; gap: 2.5rem;
+  }
+  @media(max-width: 700px) { .booking-layout { grid-template-columns: 1fr; } }
+  .form-section { margin-bottom: 2rem; }
+  .form-label { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--charcoal-mid); margin-bottom: 0.5rem; display: block; }
+  .form-input, .form-select {
+    width: 100%; padding: 12px 16px;
+    border: 1px solid var(--cream-dark);
+    background: var(--off-white);
+    font-family: 'Jost', sans-serif; font-size: 14px;
+    color: var(--charcoal); outline: none; transition: border-color 0.2s; appearance: none;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--gold); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
+  .step-heading {
+    font-family: 'Playfair Display', serif; font-size: 22px; color: var(--charcoal);
+    margin-bottom: 0.3rem; display: flex; align-items: center; gap: 12px;
+  }
+  .step-num {
+    width: 28px; height: 28px; background: var(--gold); color: var(--charcoal);
+    font-size: 12px; font-weight: 500; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .step-sub { font-size: 13px; color: var(--charcoal-light); font-weight: 300; margin-bottom: 1.2rem; margin-left: 40px; }
+
+  /* TIME SLOTS */
+  .slot-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  @media(max-width: 400px) { .slot-grid { grid-template-columns: repeat(3, 1fr); } }
+  .slot {
+    border: 1px solid var(--cream-dark); background: var(--off-white);
+    padding: 10px 6px; text-align: center; font-size: 13px;
+    cursor: pointer; transition: all 0.15s; color: var(--charcoal);
+    font-family: 'Jost', sans-serif;
+  }
+  .slot:hover, .slot.selected { background: var(--gold); border-color: var(--gold); color: var(--charcoal); font-weight: 500; }
+  .slot.taken { color: var(--charcoal-light); background: var(--cream-dark); cursor: not-allowed; text-decoration: line-through; font-size: 11px; }
+
+  /* BOOKING SUMMARY */
+  .booking-summary {
+    background: var(--charcoal); padding: 1.5rem;
+    position: sticky; top: 80px; align-self: start;
+  }
+  .bs-title {
+    font-family: 'Playfair Display', serif; font-size: 18px; color: var(--gold-light);
+    border-bottom: 1px solid var(--gold-dark); padding-bottom: 1rem; margin-bottom: 1rem;
+  }
+  .bs-row { display: flex; justify-content: space-between; margin-bottom: 0.6rem; font-size: 13px; }
+  .bs-key { color: var(--charcoal-light); font-weight: 300; }
+  .bs-val { color: var(--off-white); text-align: right; max-width: 180px; }
+  .bs-total {
+    border-top: 1px solid var(--gold-dark); padding-top: 1rem; margin-top: 1rem;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .bs-total-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+  .bs-total-price { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--gold); }
+  .confirm-btn {
+    width: 100%; background: var(--gold); color: var(--charcoal); border: none;
+    padding: 14px; font-family: 'Jost', sans-serif; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; margin-top: 1.5rem; transition: background 0.2s;
+  }
+  .confirm-btn:hover { background: var(--gold-light); }
+
+  /* SUCCESS */
+  .success-screen { display: none; text-align: center; padding: 4rem 2rem; max-width: 500px; margin: 0 auto; }
+  .success-icon {
+    width: 72px; height: 72px; background: var(--gold); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin: 0 auto 1.5rem; color: var(--charcoal);
+  }
+  .success-screen h2 { font-family: 'Playfair Display', serif; font-size: 32px; margin-bottom: 0.8rem; }
+  .success-screen p { color: var(--charcoal-light); font-weight: 300; line-height: 1.8; margin-bottom: 2rem; }
+
+  /* FOOTER */
+  footer {
+    background: var(--charcoal); padding: 3rem 2rem;
+    text-align: center; border-top: 1px solid var(--gold-dark);
+  }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 24px; color: var(--gold-light); margin-bottom: 0.5rem; }
+  .footer-logo span { color: var(--gold); font-style: italic; }
+  footer p { color: var(--charcoal-light); font-size: 13px; font-weight: 300; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showPage('home')">Glam<span>our</span></div>
+  <ul class="nav-links">
+    <li class="active" id="nav-home" onclick="showPage('home')">Home</li>
+    <li id="nav-services" onclick="showPage('services')">Services</li>
+    <li id="nav-agents" onclick="showPage('agents')">Our Artists</li>
+    <li id="nav-booking" onclick="showPage('booking')">Book Now</li>
+  </ul>
+  <button class="nav-btn" onclick="showPage('booking')">Book Appointment</button>
+  <div class="hamburger" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" style="display:none; background:var(--charcoal); border-top:1px solid var(--gold-dark); padding:1rem 2rem; position:sticky; top:64px; z-index:99;">
+  <div onclick="showPage('home'); toggleMobileMenu()" style="padding:0.8rem 0; color:var(--gold-light); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.07); cursor:pointer;">Home</div>
+  <div onclick="showPage('services'); toggleMobileMenu()" style="padding:0.8rem 0; color:var(--gold-light); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.07); cursor:pointer;">Services</div>
+  <div onclick="showPage('agents'); toggleMobileMenu()" style="padding:0.8rem 0; color:var(--gold-light); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; border-bottom:1px solid rgba(255,255,255,0.07); cursor:pointer;">Our Artists</div>
+  <div onclick="showPage('booking'); toggleMobileMenu()" style="padding:0.8rem 0; color:var(--gold); font-size:14px; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer;">Book Now</div>
+</div>
+
+<!-- ===== HOME PAGE ===== -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-tag">✦ Luxury Beauty On Demand</div>
+    <h1>Where Beauty<br>Meets <em>Elegance</em></h1>
+    <p>Connect with Indore's finest beauty parlours. Book certified artists for manicure, pedicure, makeup, facials & more.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="showPage('booking')">Book an Appointment</button>
+      <button class="btn-outline" onclick="showPage('services')">Explore Services</button>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat"><div class="stat-num">48+</div><div class="stat-label">Parlours</div></div>
+    <div class="stat"><div class="stat-num">120+</div><div class="stat-label">Certified Artists</div></div>
+    <div class="stat"><div class="stat-num">5,800+</div><div class="stat-label">Bookings Done</div></div>
+    <div class="stat"><div class="stat-num">4.9★</div><div class="stat-label">Average Rating</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">✦ Our Services</div>
+    <div class="section-title">Everything You <em>Deserve</em></div>
+    <div class="divider"></div>
+    <div class="section-sub">From bridal makeup to express manicures — all services available at your chosen parlour or at home.</div>
+    <div class="service-grid">
+      <div class="service-card" onclick="showPage('services')">
+        <div class="service-icon">💅</div>
+        <div class="service-name">Manicure</div>
+        <div class="service-desc">Classic, gel, acrylic & nail art</div>
+        <div class="service-price">From ₹299</div>
+      </div>
+      <div class="service-card" onclick="showPage('services')">
+        <div class="service-icon">🦶</div>
+        <div class="service-name">Pedicure</div>
+        <div class="service-desc">Spa, chocolate & whitening</div>
+        <div class="service-price">From ₹399</div>
+      </div>
+      <div class="service-card" onclick="showPage('services')">
+        <div class="service-icon">💄</div>
+        <div class="service-name">Makeup</div>
+        <div class="service-desc">Party, bridal & airbrush</div>
+        <div class="service-price">From ₹799</div>
+      </div>
+      <div class="service-card" onclick="showPage('services')">
+        <div class="service-icon">✨</div>
+        <div class="service-name">Facial</div>
+        <div class="service-desc">Gold, diamond & clean-up</div>
+        <div class="service-price">From ₹499</div>
+      </div>
+      <div class="service-card" onclick="showPage('services')">
+        <div class="service-icon">💇</div>
+        <div class="service-name">Hair</div>
+        <div class="service-desc">Cut, colour & treatment</div>
+        <div class="service-price">From ₹349</div>
+      </div>
+      <div class="service-card" onclick="showPage('services')">
+        <div class="service-icon">🌿</div>
+        <div class="service-name">Waxing</div>
+        <div class="service-desc">Rica, chocolate & full body</div>
+        <div class="service-price">From ₹149</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background: var(--off-white); padding: 1px 0;">
+    <div class="section">
+      <div class="section-label">✦ Featured Parlours</div>
+      <div class="section-title">Top Rated <em>Salons</em></div>
+      <div class="divider"></div>
+      <div class="parlour-grid">
+        <div class="parlour-card" onclick="showPage('booking')">
+          <div class="parlour-img" style="background:#2C2520;">🌸
+            <div class="parlour-badge">Top Rated</div>
+          </div>
+          <div class="parlour-body">
+            <div class="parlour-name">Blush & Bloom Studio</div>
+            <div class="parlour-loc">📍 Vijay Nagar, Indore</div>
+            <div class="parlour-tags"><span class="tag">Makeup</span><span class="tag">Bridal</span><span class="tag">Facials</span></div>
+            <div class="parlour-footer">
+              <div><div class="stars">★★★★★</div><div class="rating-count">4.9 · 218 reviews</div></div>
+              <button class="btn-sm" onclick="event.stopPropagation(); showPage('booking')">Book</button>
+            </div>
+          </div>
+        </div>
+        <div class="parlour-card" onclick="showPage('booking')">
+          <div class="parlour-img" style="background:#332A22;">💎
+            <div class="parlour-badge">Premium</div>
+          </div>
+          <div class="parlour-body">
+            <div class="parlour-name">The Golden Glow</div>
+            <div class="parlour-loc">📍 Palasia, Indore</div>
+            <div class="parlour-tags"><span class="tag">Nails</span><span class="tag">Hair</span><span class="tag">Waxing</span></div>
+            <div class="parlour-footer">
+              <div><div class="stars">★★★★★</div><div class="rating-count">4.8 · 142 reviews</div></div>
+              <button class="btn-sm" onclick="event.stopPropagation(); showPage('booking')">Book</button>
+            </div>
+          </div>
+        </div>
+        <div class="parlour-card" onclick="showPage('booking')">
+          <div class="parlour-img" style="background:#28222A;">🌺</div>
+          <div class="parlour-body">
+            <div class="parlour-name">Velvet Rose Beauty</div>
+            <div class="parlour-loc">📍 New Palasia, Indore</div>
+            <div class="parlour-tags"><span class="tag">Pedicure</span><span class="tag">Spa</span></div>
+            <div class="parlour-footer">
+              <div><div class="stars">★★★★☆</div><div class="rating-count">4.7 · 98 reviews</div></div>
+              <button class="btn-sm" onclick="event.stopPropagation(); showPage('booking')">Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-logo">Glam<span>our</span></div>
+    <p style="margin-top:0.5rem;">Indore's Premium Beauty Booking Platform</p>
+    <p style="margin-top:0.3rem; font-size:12px; opacity:0.5;">© 2025 Glamour Beauty. All rights reserved.</p>
+  </footer>
+</div>
+
+<!-- ===== SERVICES PAGE ===== -->
+<div class="page" id="page-services">
+  <div class="services-hero">
+    <div class="hero-tag" style="border-color:var(--gold-dark); color:var(--gold); display:inline-block; margin-bottom:1rem;">✦ Our Menu</div>
+    <h2>Services & <em style="font-style:italic; color:var(--gold);">Pricing</em></h2>
+    <p>Transparent pricing, certified artists, no hidden charges</p>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterServices('all',this)">All</button>
+    <button class="filter-btn" onclick="filterServices('nails',this)">Nails</button>
+    <button class="filter-btn" onclick="filterServices('face',this)">Face & Skin</button>
+    <button class="filter-btn" onclick="filterServices('makeup',this)">Makeup</button>
+    <button class="filter-btn" onclick="filterServices('hair',this)">Hair</button>
+    <button class="filter-btn" onclick="filterServices('body',this)">Body</button>
+  </div>
+  <div class="service-list">
+    <div class="service-row" data-cat="nails">
+      <div class="sr-icon">💅</div>
+      <div class="sr-info"><div class="sr-name">Classic Manicure</div><div class="sr-desc">Nail shaping, cuticle care, hand massage & regular polish</div></div>
+      <div class="sr-right"><div class="sr-duration">45 min</div><div class="sr-price">₹299</div><button class="btn-sm" style="margin-top:6px" onclick="goBook('Classic Manicure','₹299')">Book</button></div>
+    </div>
+    <div class="service-row" data-cat="nails">
+      <div class="sr-icon">✨</div>
+      <div class="sr-info"><div class="sr-name">Gel Manicure</div><div class="sr-desc">Long-lasting gel polish with UV cure, chip-free for 3 weeks</div></div>
+      <div class="sr-right"><div class="sr-duration">60 min</div><div class="sr-price">₹599</div><button class="btn-sm" style="margin-top:6px" onclick="goBook('Gel Manicure','₹599')">Book</button></div>
+    </div>
+    <div class="service-row" data-cat="nails">
+      <div class="sr-icon">🦶</div>
+      <div class="sr-info"><div class="sr-name">Spa Pedicure</div><div class="sr-desc">Foot soak, scrub, mask, massage & nail polish</div></div>
+      <div class="sr-right"><div class="sr-duration">75 min</div><div class="sr-price">₹599</div><button class="btn-sm" style="margin-top:6px" onclick="goBook('Spa Pedicure','₹599')">Book</button></div>
+    </div>
+    <div class="service-row" data-cat="face">
+      <div class="sr-icon">🌟</div>
+      <div class="sr-info"><div class="sr-name">Gold Facial</div><div class="sr-desc">Anti-aging gold infused facial for radiant glowing skin</div></div>
+      <div class="sr-right"><div class="sr-duration">60 min</div><div class="sr-price">₹999</div><button class="btn-sm" style="margin-top:6px" onclick="goBook('Gold Facial','₹999')">Book</button></div>
+    </div>
+    <div class="service-row" data-cat="face">
+      <div class="sr-icon">💎</div>
+      <div class="sr-info"><div class="sr-name">Diamond Facial</div><div class="sr-desc">Deep exfoliation, diamond dermabrasion & brightening mask</div></div>
+      <div class="sr-right"><div class="sr-duration">75 min</div><div class="sr-price">₹1,299</div><button class="btn-sm" style="margin-top:6px" onclick="goBook('Diamond Facial','₹1,299')">Book</button></div>
+    </div>
+    <div class="service-row" data-cat="makeup">
+      <div class="sr-icon">💄</div>
+      <div class="sr-info"><div class="sr-name">Party Makeup</div><div class="sr-desc">HD party look with contouring, eyes & long-lasting finish</div></div>
+      <div class="sr-right"><div class="sr-duration">90 min</div><div class="sr-price">₹1,499</div><button class="btn-sm" style="margin-top:6px" onclick="goBook('Party Makeup','₹1,499')">Book</button></div>
+    </div>
+    <div class="service-row" data-cat="makeup">
+      <div class="sr-icon">👰</div>
+      <div class="sr-info"><div class="sr-name">Bridal Makeup</div><div class="sr-desc">Full bridal package — trial + event day airbrush makeup</div></div>
+      <div class="sr-right"><div class="sr-duration">3 hrs</div><div class="sr-price">₹5,999</div><button class="btn-sm" style="margin-top:6px" onclick="goBook('Bridal Makeup','₹5,999')">Book</button></div>
+    </div>
+    <div class="service-row" data-cat="hair">
+      <div class="sr-icon">✂️</div>
+      <div class="sr-info"><div class="sr-name">Hair Cut & Style</div><div class="sr-desc">Wash, expert cut, blow-dry & styling</div></div>
+      <div class="sr-right"><div class="sr-duration">60 min</div><div class="sr-price">₹499</div><button class="btn-sm" style="margin-top:6px" onclick="goBook('Hair Cut & Style','₹499')">Book</button></div>
+    </div>
+    <div class="service-row" data-cat="body">
+      <div class="sr-icon">🌿</div>
+      <div class="sr-info"><div class="sr-name">Full Body Waxing</div><div class="sr-desc">Rica or chocolate wax, full body including underarms</div></div>
+      <div class="sr-right"><div class="sr-duration">2 hrs</div><div class="sr-price">₹1,199</div><button class="btn-sm" style="margin-top:6px" onclick="goBook('Full Body Waxing','₹1,199')">Book</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== AGENTS PAGE ===== -->
+<div class="page" id="page-agents">
+  <div class="services-hero">
+    <div class="hero-tag" style="border-color:var(--gold-dark); color:var(--gold); display:inline-block; margin-bottom:1rem;">✦ The Artists</div>
+    <h2>Meet Our <em style="font-style:italic; color:var(--gold);">Specialists</em></h2>
+    <p>Hand-picked, certified & experienced beauty professionals</p>
+  </div>
+  <div class="section">
+    <div class="agents-grid">
+      <div class="agent-card">
+        <div class="agent-avatar">P</div>
+        <div class="agent-name">Priya Sharma</div>
+        <div class="agent-role">Senior Makeup Artist</div>
+        <div class="agent-skills"><span class="skill-tag">Bridal</span><span class="skill-tag">Airbrush</span><span class="skill-tag">HD Makeup</span></div>
+        <div class="agent-avail">● Available Today</div>
+        <button class="btn-sm" onclick="goBook('Party Makeup','₹1,499')">Book with Priya</button>
+      </div>
+      <div class="agent-card">
+        <div class="agent-avatar">N</div>
+        <div class="agent-name">Neha Verma</div>
+        <div class="agent-role">Nail Art Specialist</div>
+        <div class="agent-skills"><span class="skill-tag">Gel Nails</span><span class="skill-tag">Nail Art</span><span class="skill-tag">Acrylic</span></div>
+        <div class="agent-avail">● Available Today</div>
+        <button class="btn-sm" onclick="goBook('Gel Manicure','₹599')">Book with Neha</button>
+      </div>
+      <div class="agent-card">
+        <div class="agent-avatar">R</div>
+        <div class="agent-name">Ritu Joshi</div>
+        <div class="agent-role">Skin & Facial Expert</div>
+        <div class="agent-skills"><span class="skill-tag">Facials</span><span class="skill-tag">Cleanup</span><span class="skill-tag">Waxing</span></div>
+        <div class="agent-avail busy">● Booked Until 4 PM</div>
+        <button class="btn-sm" onclick="goBook('Gold Facial','₹999')">Book with Ritu</button>
+      </div>
+      <div class="agent-card">
+        <div class="agent-avatar">S</div>
+        <div class="agent-name">Sunita Malhotra</div>
+        <div class="agent-role">Hair Stylist</div>
+        <div class="agent-skills"><span class="skill-tag">Cut & Colour</span><span class="skill-tag">Keratin</span><span class="skill-tag">Bridal Hair</span></div>
+        <div class="agent-avail">● Available Today</div>
+        <button class="btn-sm" onclick="goBook('Hair Cut & Style','₹499')">Book with Sunita</button>
+      </div>
+      <div class="agent-card">
+        <div class="agent-avatar">A</div>
+        <div class="agent-name">Anjali Rao</div>
+        <div class="agent-role">Spa & Wellness</div>
+        <div class="agent-skills"><span class="skill-tag">Pedicure</span><span class="skill-tag">Body Massage</span><span class="skill-tag">Spa</span></div>
+        <div class="agent-avail">● Available Today</div>
+        <button class="btn-sm" onclick="goBook('Spa Pedicure','₹599')">Book with Anjali</button>
+      </div>
+      <div class="agent-card">
+        <div class="agent-avatar">M</div>
+        <div class="agent-name">Meera Singh</div>
+        <div class="agent-role">Bridal Specialist</div>
+        <div class="agent-skills"><span class="skill-tag">Bridal Makeup</span><span class="skill-tag">Saree Draping</span><span class="skill-tag">Mehendi</span></div>
+        <div class="agent-avail busy">● Next Available: Tomorrow</div>
+        <button class="btn-sm" onclick="goBook('Bridal Makeup','₹5,999')">Book with Meera</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BOOKING PAGE ===== -->
+<div class="page" id="page-booking">
+  <div id="booking-form-section">
+    <div class="booking-layout">
+      <div class="booking-form">
+        <div style="margin-bottom:2rem;">
+          <div class="section-label">✦ Appointment</div>
+          <div class="section-title">Book Your <em>Session</em></div>
+          <div class="divider"></div>
+        </div>
+        <div class="form-section">
+          <div class="step-heading"><span class="step-num">1</span> Your Details</div>
+          <div class="step-sub">So we know who's coming</div>
+          <div class="form-row" style="margin-bottom:1rem;">
+            <div>
+              <label class="form-label">Full Name</label>
+              <input class="form-input" id="inp-name" placeholder="Your name" type="text">
+            </div>
+            <div>
+              <label class="form-label">Phone Number</label>
+              <input class="form-input" id="inp-phone" placeholder="+91 98765 43210" type="tel">
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="step-heading"><span class="step-num">2</span> Choose Service</div>
+          <div class="step-sub">Pick what you'd like</div>
+          <div class="form-row" style="margin-bottom:1rem;">
+            <div>
+              <label class="form-label">Service</label>
+              <select class="form-select" id="inp-service" onchange="updateSummary()">
+                <option value="">Select service</option>
+                <option value="Classic Manicure|₹299">Classic Manicure — ₹299</option>
+                <option value="Gel Manicure|₹599">Gel Manicure — ₹599</option>
+                <option value="Spa Pedicure|₹599">Spa Pedicure — ₹599</option>
+                <option value="Gold Facial|₹999">Gold Facial — ₹999</option>
+                <option value="Diamond Facial|₹1,299">Diamond Facial — ₹1,299</option>
+                <option value="Party Makeup|₹1,499">Party Makeup — ₹1,499</option>
+                <option value="Bridal Makeup|₹5,999">Bridal Makeup — ₹5,999</option>
+                <option value="Hair Cut & Style|₹499">Hair Cut & Style — ₹499</option>
+                <option value="Full Body Waxing|₹1,199">Full Body Waxing — ₹1,199</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Preferred Artist</label>
+              <select class="form-select" id="inp-artist" onchange="updateSummary()">
+                <option value="">Any available</option>
+                <option>Priya Sharma</option>
+                <option>Neha Verma</option>
+                <option>Ritu Joshi</option>
+                <option>Sunita Malhotra</option>
+                <option>Anjali Rao</option>
+                <option>Meera Singh</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Parlour</label>
+            <select class="form-select" id="inp-parlour" onchange="updateSummary()">
+              <option value="">Select parlour</option>
+              <option>Blush & Bloom Studio, Vijay Nagar</option>
+              <option>The Golden Glow, Palasia</option>
+              <option>Velvet Rose Beauty, New Palasia</option>
+              <option>Home Visit (+₹200)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="step-heading"><span class="step-num">3</span> Date & Time</div>
+          <div class="step-sub">Pick a slot that works for you</div>
+          <div style="margin-bottom:1rem;">
+            <label class="form-label">Date</label>
+            <input class="form-input" id="inp-date" type="date" onchange="updateSummary()" style="max-width:260px;">
+          </div>
+          <label class="form-label">Available Slots</label>
+          <div class="slot-grid">
+            <div class="slot" onclick="selectSlot(this,'10:00 AM')">10:00 AM</div>
+            <div class="slot taken">11:00 AM</div>
+            <div class="slot" onclick="selectSlot(this,'12:00 PM')">12:00 PM</div>
+            <div class="slot taken">1:00 PM</div>
+            <div class="slot" onclick="selectSlot(this,'2:00 PM')">2:00 PM</div>
+            <div class="slot" onclick="selectSlot(this,'3:00 PM')">3:00 PM</div>
+            <div class="slot taken">4:00 PM</div>
+            <div class="slot" onclick="selectSlot(this,'5:00 PM')">5:00 PM</div>
+            <div class="slot" onclick="selectSlot(this,'6:00 PM')">6:00 PM</div>
+            <div class="slot" onclick="selectSlot(this,'7:00 PM')">7:00 PM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUMMARY -->
+      <div>
+        <div class="booking-summary">
+          <div class="bs-title">Booking Summary</div>
+          <div class="bs-row"><span class="bs-key">Service</span><span class="bs-val" id="s-service">—</span></div>
+          <div class="bs-row"><span class="bs-key">Artist</span><span class="bs-val" id="s-artist">—</span></div>
+          <div class="bs-row"><span class="bs-key">Parlour</span><span class="bs-val" id="s-parlour">—</span></div>
+          <div class="bs-row"><span class="bs-key">Date</span><span class="bs-val" id="s-date">—</span></div>
+          <div class="bs-row"><span class="bs-key">Time</span><span class="bs-val" id="s-time">—</span></div>
+          <div class="bs-total">
+            <span class="bs-total-label">Total</span>
+            <span class="bs-total-price" id="s-price">₹—</span>
+          </div>
+          <button class="confirm-btn" onclick="confirmBooking()">Confirm Booking →</button>
+          <p style="font-size:11px; color:var(--charcoal-light); text-align:center; margin-top:0.8rem; font-weight:300;">Free cancellation up to 2 hours before</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS SCREEN -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>Booking Confirmed!</h2>
+    <p>Your appointment has been successfully booked. A confirmation has been sent to your phone. We look forward to making you feel beautiful.</p>
+    <div style="background:var(--off-white); border:1px solid var(--gold-light); padding:1.5rem; margin-bottom:2rem; text-align:left;">
+      <div class="bs-row"><span class="bs-key">Service</span><span id="c-service" style="color:var(--charcoal); font-size:13px;">—</span></div>
+      <div class="bs-row"><span class="bs-key">Date & Time</span><span id="c-datetime" style="color:var(--charcoal); font-size:13px;">—</span></div>
+      <div class="bs-row"><span class="bs-key">Artist</span><span id="c-artist" style="color:var(--charcoal); font-size:13px;">—</span></div>
+      <div class="bs-row" style="border-top:1px solid var(--cream-dark); padding-top:0.8rem; margin-top:0.8rem;">
+        <span class="bs-key" style="font-weight:500;">Total Paid</span>
+        <span style="font-family:'Playfair Display',serif; font-size:20px; color:var(--gold-dark);" id="c-price">—</span>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="resetAndGoHome()">Back to Home</button>
+  </div>
+</div>
+
+<script>
+  let selectedTime = '';
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-links li').forEach(l => l.classList.remove('active'));
+    const navEl = document.getElementById('nav-' + id);
+    if (navEl) navEl.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function toggleMobileMenu() {
+    const m = document.getElementById('mobile-menu');
+    m.style.display = m.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function goBook(service, price) {
+    showPage('booking');
+    document.getElementById('booking-form-section').style.display = 'block';
+    document.getElementById('success-screen').style.display = 'none';
+    if (service) {
+      const sel = document.getElementById('inp-service');
+      for (let opt of sel.options) {
+        if (opt.value.startsWith(service)) { sel.value = opt.value; break; }
+      }
+    }
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('inp-date').value = today;
+    updateSummary();
+  }
+
+  function selectSlot(el, time) {
+    document.querySelectorAll('.slot:not(.taken)').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTime = time;
+    document.getElementById('s-time').textContent = time;
+  }
+
+  function updateSummary() {
+    const svc = document.getElementById('inp-service').value;
+    const artist = document.getElementById('inp-artist').value;
+    const parlour = document.getElementById('inp-parlour').value;
+    const date = document.getElementById('inp-date').value;
+    if (svc) {
+      const parts = svc.split('|');
+      document.getElementById('s-service').textContent = parts[0];
+      document.getElementById('s-price').textContent = parts[1] || '—';
+    } else {
+      document.getElementById('s-service').textContent = '—';
+      document.getElementById('s-price').textContent = '₹—';
+    }
+    document.getElementById('s-artist').textContent = artist || 'Any available';
+    document.getElementById('s-parlour').textContent = parlour ? parlour.split(',')[0] : '—';
+    if (date) {
+      const d = new Date(date + 'T00:00:00');
+      document.getElementById('s-date').textContent = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+  }
+
+  function confirmBooking() {
+    const name = document.getElementById('inp-name').value.trim();
+    const service = document.getElementById('s-service').textContent;
+    const time = document.getElementById('s-time').textContent;
+    const date = document.getElementById('s-date').textContent;
+    const artist = document.getElementById('s-artist').textContent;
+    const price = document.getElementById('s-price').textContent;
+    if (!name || service === '—' || time === '—' || date === '—') {
+      alert('Please fill in your name, select a service, pick a date and choose a time slot.');
+      return;
+    }
+    document.getElementById('c-service').textContent = service;
+    document.getElementById('c-datetime').textContent = date + ' at ' + time;
+    document.getElementById('c-artist').textContent = artist;
+    document.getElementById('c-price').textContent = price;
+    document.getElementById('booking-form-section').style.display = 'none';
+    document.getElementById('success-screen').style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  function resetAndGoHome() {
+    document.getElementById('booking-form-section').style.display = 'block';
+    document.getElementById('success-screen').style.display = 'none';
+    document.getElementById('inp-name').value = '';
+    document.getElementById('inp-phone').value = '';
+    document.getElementById('inp-service').value = '';
+    document.getElementById('inp-artist').value = '';
+    document.getElementById('inp-parlour').value = '';
+    selectedTime = '';
+    document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+    showPage('home');
+  }
+
+  function filterServices(cat, el) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.service-row').forEach(r => {
+      r.style.display = (cat === 'all' || r.dataset.cat === cat) ? 'flex' : 'none';
+    });
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('inp-date').value = today;
+  document.getElementById('inp-date').min = today;
+</script>
+</body>
+</html>
