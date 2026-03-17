@@ -395,7 +395,7 @@
     <li id="nav-agents" onclick="showPage('agents')">Our Artists</li>
     <li id="nav-booking" onclick="showPage('booking')">Book Now</li>
   </ul>
-  <button class="nav-btn" onclick="showPage('booking')">Book Appointment</button>
+  <div style="display:flex;gap:8px;align-items:center;"><button class="nav-btn" onclick="showPage('booking')" style="background:transparent;border:1px solid var(--gold-dark);color:var(--gold-light);">Book Now</button><button class="nav-btn" id="auth-btn" onclick="window._googleLogin && window._googleLogin()">Sign In</button></div>
   <div class="hamburger" onclick="toggleMobileMenu()">
     <span></span><span></span><span></span>
   </div>
@@ -843,25 +843,6 @@
     }
   }
 
-  function confirmBooking() {
-    const name = document.getElementById('inp-name').value.trim();
-    const service = document.getElementById('s-service').textContent;
-    const time = document.getElementById('s-time').textContent;
-    const date = document.getElementById('s-date').textContent;
-    const artist = document.getElementById('s-artist').textContent;
-    const price = document.getElementById('s-price').textContent;
-    if (!name || service === '—' || time === '—' || date === '—') {
-      alert('Please fill in your name, select a service, pick a date and choose a time slot.');
-      return;
-    }
-    document.getElementById('c-service').textContent = service;
-    document.getElementById('c-datetime').textContent = date + ' at ' + time;
-    document.getElementById('c-artist').textContent = artist;
-    document.getElementById('c-price').textContent = price;
-    document.getElementById('booking-form-section').style.display = 'none';
-    document.getElementById('success-screen').style.display = 'block';
-    window.scrollTo(0, 0);
-  }
 
   function resetAndGoHome() {
     document.getElementById('booking-form-section').style.display = 'block';
@@ -887,6 +868,166 @@
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('inp-date').value = today;
   document.getElementById('inp-date').min = today;
+</script>
+
+<!-- ====================================================
+     RAZORPAY PAYMENT SCRIPT
+     ==================================================== -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<!-- ====================================================
+     FIREBASE + AUTH + FIRESTORE INTEGRATION
+     Replace the 6 YOUR_... placeholders with your own
+     Firebase config values from the Firebase Console.
+     ==================================================== -->
+<script type="module">
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider,
+           signInWithPopup, signOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+  import { getFirestore, collection,
+           addDoc, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+  /* --------------------------------------------------
+     STEP 1 — Paste YOUR Firebase config values here.
+     Get them from: Firebase Console → Project Settings
+     → Your apps → SDK setup and configuration
+  -------------------------------------------------- */
+  const firebaseConfig = {
+    apiKey:            "AIzaSyBN8aWdeSzMpGp1YhXtUnQvKn_WnmETHWo",
+    authDomain:        "glamour-beauty-19eb4.firebaseapp.com",
+    projectId:         "glamour-beauty-19eb4",
+    storageBucket:     "glamour-beauty-19eb4.firebasestorage.app",
+    messagingSenderId: "696745923319",
+    appId:             "1:696745923319:web:15f7b243555f88b2b179f2"
+  };
+
+  /* --------------------------------------------------
+     STEP 2 — Paste YOUR Razorpay Test Key ID here.
+     Get it from: Razorpay Dashboard → Settings → API Keys
+  -------------------------------------------------- */
+  const RAZORPAY_KEY = "rzp_test_YOUR_KEY_ID";
+
+  /* ---------- Firebase init ---------- */
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  /* ---------- Auth state watcher ----------
+     Updates the nav button text when user logs in / out */
+  onAuthStateChanged(auth, (user) => {
+    const btn = document.getElementById('auth-btn');
+    if (!btn) return;
+    if (user) {
+      btn.textContent = 'Hi, ' + user.displayName.split(' ')[0] + ' · Sign out';
+      btn.onclick = () => signOut(auth);
+    } else {
+      btn.textContent = 'Sign In';
+      btn.onclick = googleLogin;
+    }
+  });
+
+  /* ---------- Google Login ---------- */
+  async function googleLogin() {
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+    } catch (e) {
+      console.error('Login failed:', e.message);
+      alert('Login failed. Make sure your domain is added in Firebase Auth settings.');
+    }
+  }
+  window._googleLogin = googleLogin;
+
+  /* ---------- Save booking to Firestore ---------- */
+  async function saveBookingToDB(data) {
+    try {
+      const docRef = await addDoc(collection(db, 'bookings'), {
+        customerName : data.name,
+        phone        : data.phone,
+        service      : data.service,
+        artist       : data.artist,
+        parlour      : data.parlour,
+        date         : data.date,
+        time         : data.time,
+        price        : data.price,
+        paymentId    : data.paymentId || '',
+        status       : 'confirmed',
+        createdAt    : serverTimestamp()
+      });
+      console.log('Booking saved! ID:', docRef.id);
+      return docRef.id;
+    } catch (e) {
+      console.error('Error saving booking:', e);
+    }
+  }
+
+  /* ---------- Razorpay payment flow ----------
+     Called when user clicks "Confirm Booking".
+     1. Validates form fields
+     2. Opens Razorpay checkout
+     3. On success → saves booking to Firestore → shows success screen */
+  window.confirmBooking = async function () {
+    const name    = document.getElementById('inp-name').value.trim();
+    const phone   = document.getElementById('inp-phone').value.trim();
+    const service = document.getElementById('s-service').textContent;
+    const time    = document.getElementById('s-time').textContent;
+    const date    = document.getElementById('s-date').textContent;
+    const artist  = document.getElementById('s-artist').textContent;
+    const parlour = document.getElementById('s-parlour').textContent;
+    const priceEl = document.getElementById('s-price').textContent;
+
+    if (!name || service === '—' || time === '—' || date === '—') {
+      alert('Please fill in your name, select a service, pick a date and a time slot.');
+      return;
+    }
+
+    /* Parse rupee amount — strips ₹ and commas */
+    const amount = parseInt(priceEl.replace(/[^\d]/g, '')) || 0;
+
+    /* Open Razorpay checkout */
+    const options = {
+      key         : RAZORPAY_KEY,
+      amount      : amount * 100,   /* paise */
+      currency    : 'INR',
+      name        : 'Glamour Beauty',
+      description : service,
+      image       : '',             /* optional: your logo URL */
+      prefill     : { name, contact: phone },
+      theme       : { color: '#C9A84C' },
+
+      handler: async function (response) {
+        /* Payment success → save to Firestore */
+        await saveBookingToDB({
+          name, phone, service, artist, parlour,
+          date, time,
+          price    : priceEl,
+          paymentId: response.razorpay_payment_id
+        });
+
+        /* Update success screen fields */
+        document.getElementById('c-service').textContent  = service;
+        document.getElementById('c-datetime').textContent = date + ' at ' + time;
+        document.getElementById('c-artist').textContent   = artist;
+        document.getElementById('c-price').textContent    = priceEl;
+
+        /* Show success screen */
+        document.getElementById('booking-form-section').style.display = 'none';
+        document.getElementById('success-screen').style.display = 'block';
+        window.scrollTo(0, 0);
+      },
+
+      modal: {
+        ondismiss: function () {
+          console.log('Payment cancelled by user.');
+        }
+      }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+  };
 </script>
 </body>
 </html>
